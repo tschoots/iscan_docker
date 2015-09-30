@@ -81,8 +81,8 @@ if [ "${#images[@]}" -eq "0" ];then
 fi
 for img in "${images[@]}"
 do
-  mkdir tmp
-  cd tmp
+  mkdir -p tmp/img
+  cd tmp/img
   docker save -o dump.tar $img
   tar -xf dump.tar
   rm -rf dump.tar
@@ -91,7 +91,7 @@ do
   cmd="$_ISCAN_CLIENT --host $host --port $port --scheme $scheme --project $(hostname) --release $img --username $username --password $password  -v ."
   echo $cmd
   result=$($cmd)
-  cd ..
+  cd ../..
   chmod -R 777 tmp
   rm -rf tmp
   echo $img
