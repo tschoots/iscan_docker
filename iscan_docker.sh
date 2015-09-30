@@ -81,8 +81,8 @@ if [ "${#images[@]}" -eq "0" ];then
 fi
 for img in "${images[@]}"
 do
-  mkdir -p tmp/img
-  cd tmp/img
+  mkdir -p tmp/$img
+  cd tmp/$img
   docker save -o dump.tar $img
   tar -xf dump.tar
   rm -rf dump.tar
