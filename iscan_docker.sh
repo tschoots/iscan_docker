@@ -81,8 +81,10 @@ if [ "${#images[@]}" -eq "0" ];then
 fi
 for img in "${images[@]}"
 do
-  mkdir -p tmp/$img
-  cd tmp/$img
+  tmp_dir=$(echo $img | sed 's/:/_/g')
+  echo "creating directory : $tmp_dir"
+  mkdir -p tmp/$tmp_dir
+  cd tmp/$tmp_dir
   docker save -o dump.tar $img
   tar -xf dump.tar
   rm -rf dump.tar
