@@ -81,7 +81,13 @@ if [ "${#images[@]}" -eq "0" ];then
 fi
 for img in "${images[@]}"
 do
-  tmp_dir=$(echo $img | sed 's/:/_/g')
+  image_name=$(echo $img | sed 's/:.*$//')
+  tag=$(echo $img | sed 's/^.*://')
+  project=$(echo "{$(hostname)}$image_name")
+  echo "image : $image_name"
+  echo "tag : $tag"
+  echo "project : $project"
+  tmp_dir=$(echo $img | sed 's/:/_/g' | sed 's/\///g')
   echo "creating directory : $tmp_dir"
   mkdir -p tmp/$tmp_dir
   cd tmp/$tmp_dir
@@ -90,12 +96,11 @@ do
   rm -rf dump.tar
   find . -name "*.tar" -exec tar -xf {} \;
   find . -name "*.tar" -exec rm -rf {} \;
-  cmd="$_ISCAN_CLIENT --host $host --port $port --scheme $scheme --project $(hostname) --release $img --username $username --password $password  -v ."
+  cmd="$_ISCAN_CLIENT --host $host --port $port --scheme $scheme --project $project --release $tag --username $username --password $password  -v ."
   echo $cmd
-  result=$($cmd)
+  $cmd
   cd ../..
   chmod -R 777 tmp
-  rm -rf tmp
-  echo $img
+  #rm -rf tmp
 done
 
