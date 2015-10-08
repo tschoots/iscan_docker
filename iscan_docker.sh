@@ -27,8 +27,9 @@ _HOSTNAME=$(hostname)
 
 usage() {
   cat <<EEOPTS
-    $(basename $0) -h <hub_hostname> -p <port> -s <scheme [http/https]> -u <username> -w <password> -i <image:tag>
+    $(basename $0) -h <hub_hostname> -p <port> -s <scheme [http/https]> -u <username> [-w <password>] [-i <image>]
     Note all parameters are mandatory, except for the -i parameter which gives the opertunity to scan one image!
+    and the -w parameter if ommited it will ask for a password interactively
 EEOPTS
     exit 1
 }
@@ -39,10 +40,12 @@ EEOPTS
 #check if server is in the output of version then docker is working properly
 version=$(docker version | grep Server)
 if [ "$version" != "Server:" ]; then
+   echo "ERROR : Shell is not in docker context!"
+   echo "use the command : eval \"\$(docker-machine env <machine name>)\" , to put it in a context"
    exit
 fi
 
-if [ "$#" -ne "10" ] && [ "$#" -ne "12" ]; then
+if [ "$#" -ne "8" ] && [ "$#" -ne "12" ] && [ "$#" -ne "10" ] ; then
    usage
 fi
 
@@ -74,6 +77,24 @@ while getopts "h:p:s:u:w:i:" opt; do
    esac
 done
 
+# check if all mandatory fields are there
+if [ -z "${host}" ]; then
+  echo "ERROR : mandatory field host switch -h missing."
+  exit
+elif [ -z "${port}" ]; then
+  echo "ERROR : mandatory field port switch -p missing."
+  exit
+elif [ -z "${scheme}" ]; then
+  echo "ERROR : mandatory field scheme switch -s missing, options : http/https."
+  exit
+elif [ -z "${username}" ]; then
+  echo "ERROR : mandatory field username swithc -u missing."
+  exit
+else
+  echo "mandatory input parameters checked."
+fi
+
+
 declare -a images=($(docker images $image | grep -v "REPOSITORY\|<none>" | sort -k 5 -r | awk '{print $1":"$2}'))
 if [ "${#images[@]}" -eq "0" ];then 
    echo "no images found"
@@ -96,11 +117,15 @@ do
   rm -rf dump.tar
   find . -name "*.tar" -exec tar -xf {} \;
   find . -name "*.tar" -exec rm -rf {} \;
-  cmd="$_ISCAN_CLIENT --host $host --port $port --scheme $scheme --project $project --release $tag --username $username --password $password  -v ."
+  if [ -z "${password}" ];then
+    cmd="$_ISCAN_CLIENT --host $host --port $port --scheme $scheme --project $project --release $tag --username $username   -v ."
+  else
+    cmd="$_ISCAN_CLIENT --host $host --port $port --scheme $scheme --project $project --release $tag --username $username --password $password  -v ."
+  fi
   echo $cmd
   $cmd
   cd ../..
   chmod -R 777 tmp
-  #rm -rf tmp
+  rm -rf tmp
 done
 
