@@ -4,7 +4,7 @@
 ##########################################################################
 #
 #  Author : Ton Schoots
-#  version: 0.1
+#  version: 0.2
 #
 #  This script scans all the containers on a docker host
 #  meaning a host able to perform docker commands.
@@ -20,6 +20,9 @@
 #  Status: 29 - 9 - 2015
 #  this script is capable to do a i scan of all the images on the machine where it's run
 #  it does not however remove the BOM if an image is not there anymore.
+#
+#  Status: 8 - 10 - 2015
+#      The script is now able to interactively give password
 ##########################################################################
 
 _ISCAN_CLIENT="/Users/tschoots/tmp/scanner/scan.cli-2.2.1.1/bin/scan.cli.sh"

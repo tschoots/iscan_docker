@@ -15,3 +15,5 @@ the following command will scan all the docker images where you perform this com
 This command will scan all the versions of the image with name "image name" if the image is
 on the machine
 ./iscan_docker.sh -h "BlackDuck hub servr host" -p 443 -s https -u "username" -w "password" -i "image name"
+
+In both commands you can ommit the -w switch , then the password will interactively be asked for
