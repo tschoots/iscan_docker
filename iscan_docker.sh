@@ -116,9 +116,9 @@ do
   mkdir -p tmp/$tmp_dir
   cd tmp/$tmp_dir
   docker save -o dump.tar $img
-  tar -xf dump.tar
+  tar -zxf dump.tar
   rm -rf dump.tar
-  find . -name "*.tar" -exec tar -xf {} \;
+  find . -name "*.tar" -exec tar -zxf {} \;
   find . -name "*.tar" -exec rm -rf {} \;
   if [ -z "${password}" ];then
     cmd="$_ISCAN_CLIENT --host $host --port $port --scheme $scheme --project $project --release $tag --username $username   -v ."
